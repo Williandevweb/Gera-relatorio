@@ -1,0 +1,24 @@
+*{
+    margin: 0;
+    padding: 0;
+}
+
+.inputs-filtro {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 200px;
+    background-color: rgb(118, 112, 211);
+}
+
+.campos{
+    font-size: 30px;
+    font-weight: 600;
+}
+
+.buttom{
+    border-width: 25px;
+    border-style: inset;
+    border-color: red;
+    cursor: pointer;
+}
