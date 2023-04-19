@@ -5,43 +5,83 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use PDF;
 
 class RelatorioController extends Controller
 {
-    //Filtra dados no banco
+    //Filtra eventos
     public function ExibeCampos(){
 
-        return view("pages.relatorio");
+        $wp_posts = DB::table('wp_posts')->get();
+
+        return view("pages.relatorio", compact('wp_posts'));
     }
 
+    //Filtra dados para Relatório PDF
     public function FiltraDados(Request $request){
 
-        dd($request);
+        if($request->check == "todos"){
 
-        // $post_name = "";
+            if($request->cpf)
+            {
 
-        // if($request->cpf)
-        // {
-        //     $wp_users = DB::table('wp_users')->where('user_login', '=', $request->cpf)->get();
+                $usuario = DB::table('wp_users')
+                    ->where('user_login', '=', $request->cpf)->first();
 
-        //     $wp_posts = DB::table('wp_posts')->where('post_author', '=', $wp_users[0]->ID)
-        //     ->whereBetween('post_date', ["{$request->fdate} 00:00:00", "{$request->sdate} 23:59:59"])->get();
+                $posts = DB::table('wp_posts')
+                    ->where('post_author', '=', $usuario->ID)
+                    ->whereBetween('post_date', ["{$request->fdate} 00:00:00", "{$request->sdate} 23:59:59"])
+                    ->join('wp_postmeta', 'wp_posts.ID', '=', 'wp_postmeta.post_id')
+                    ->join('wp_users', 'wp_posts.post_author', '=', 'wp_users.ID')->get();
 
-            // $wp_postmeta = DB::table('wp_postmeta')->where('')->get();
+                $pdf = PDF::loadView('pages.pdf', compact('posts'));
 
-        //     dd($wp_posts);
-        // }else
-        // {
-        //     $wp_posts = DB::table('wp_posts')->whereBetween('post_date', ["{$request->fdate} 00:00:00", "{$request->sdate} 23:59:59"])->get();
+                return $pdf->setPaper('a4')->stream('Relatório.pdf');
 
-        //     $post_name = substr($wp_posts[7]->post_name, 0, 3);
+            }else
+            {
+                $usuario = DB::table('wp_users')->first();
 
-        //     dd($post_name);
-        // }
+                $posts = DB::table('wp_posts')
+                    ->whereBetween('post_date', ["{$request->fdate} 00:00:00", "{$request->sdate} 23:59:59"])
+                    ->join('wp_postmeta', 'wp_posts.ID', '=', 'wp_postmeta.post_id')
+                    ->join('wp_users', 'wp_posts.post_author', '=', 'wp_users.ID')->get();
 
+                    $pdf = PDF::loadView('pages.pdf', compact('posts'));
 
+                    return $pdf->setPaper('a4')->stream('Relatório.pdf');
+            }
 
+        }else{
+            if($request->cpf)
+            {
+                $usuario = DB::table('wp_users')
+                    ->where('user_login', '=', $request->cpf)->first();
 
-        return view("pages.relatorio");
+                $posts = DB::table('wp_posts')
+                    ->where('post_author', '=', $usuario->ID)
+                    ->where('post_title', '=', $request->evento)
+                    ->whereBetween('post_date', ["{$request->fdate} 00:00:00", "{$request->sdate} 23:59:59"])
+                    ->join('wp_postmeta', 'wp_posts.ID', '=', 'wp_postmeta.post_id')
+                    ->join('wp_users', 'wp_posts.post_author', '=', 'wp_users.ID')->get();
+
+                    $pdf = PDF::loadView('pages.pdf', compact('posts'));
+
+                    return $pdf->setPaper('a4')->stream('Relatório.pdf');
+            }else
+            {
+                $usuario = DB::table('wp_users')->first();
+
+                $posts = DB::table('wp_posts')
+                    ->where('post_title', '=', $request->evento)
+                    ->whereBetween('post_date', ["{$request->fdate} 00:00:00", "{$request->sdate} 23:59:59"])
+                    ->join('wp_postmeta', 'wp_posts.ID', '=', 'wp_postmeta.post_id')
+                    ->join('wp_users', 'wp_posts.post_author', '=', 'wp_users.ID')->get();
+
+                    $pdf = PDF::loadView('pages.pdf', compact('posts'));
+
+                    return $pdf->setPaper('a4')->stream('Relatório.pdf');
+            }
+        }
     }
 }

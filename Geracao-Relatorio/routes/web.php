@@ -19,4 +19,4 @@ Route::get('/welcome', function () {
 });
 
 Route::get('/', [RelatorioController::class, 'ExibeCampos']);
-Route::get('/Relatorio', [RelatorioController::class, 'FiltraDados'])->name("filtrar_registros");
+Route::post('/Relatorio', [RelatorioController::class, 'FiltraDados'])->name("filtrar_registros");

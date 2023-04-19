@@ -17,8 +17,17 @@
 }
 
 .buttom{
-    border-width: 25px;
+    border-width: 15px;
     border-style: inset;
     border-color: red;
     cursor: pointer;
+    color: black;
+}
+
+.campos input{
+    height: 30px;
+}
+
+.campos select{
+    height: 30px;
 }

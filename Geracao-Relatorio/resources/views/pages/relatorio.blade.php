@@ -8,23 +8,21 @@
     <title>Relatório</title>
 </head>
 <body>
-    <form  action="{{route('filtrar_registros')}}" method="GET">
+    <form  action="{{route('filtrar_registros')}}" method="POST">
         {{ csrf_field() }}
         <div class="inputs-filtro">
             <div class="campos">
                 <label for="evento">Evento: </label>
                 <select name="evento" id="evento">
-                    <option selected>TESTE1</option>
-                    <option>TESTE2</option>
-                    <option>TESTE3</option>
-                    <option>TESTE4</option>
-                    <option>TESTE5</option>
+                    @foreach ($wp_posts as $evento)
+                        <option>{{$evento->post_title}}</option>
+                    @endforeach
                 </select>
             </div>
             <br>
             <div class="campos">
                 <label for="todos_eventos"> Todos Eventos</label>
-                <input type="checkbox">
+                <input type="checkbox" name="check" id="todos_eventos" value="todos">
             </div>
             <br>
             <div class="campos">
@@ -33,11 +31,11 @@
             </div>
             <br>
             <div class="campos">
-                <label>Data Inicial:    </label>
-                <input type="date" name="fdate">
+                <label>Data Inicial:</label>
+                <input type="date" required name="fdate">
 
-                <label>Data Final:    </label>
-                <input type="date" name="sdate">
+                <label>Data Final:</label>
+                <input type="date" required name="sdate">
             </div>
             <br>
             <div class="buttom">
